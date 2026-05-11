@@ -52,7 +52,7 @@ void buildLegs();
 
 float rx = 0.3f, rz = 0.5f; // used to generate leg positions in buildLegs()
 float legAngles[6] = {0, 30, 150, 180, 210, 330};
-vec3 startingLegLength = vec3(0.25f, 0.25f, 1.0f);
+vec3 startingLegLength = vec3(0.10f, 0.30f, 0.80f);
 vec3 legLength = startingLegLength; // coxa, femur, tibia
 
 

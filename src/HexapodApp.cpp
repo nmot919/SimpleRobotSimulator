@@ -52,10 +52,15 @@ private:
     float mGravity       = -9.8f;
     float mRestitution   = 0.2f;
     float mPlaneSize     = 100.0f;
+    float mMoveSpeed     = 1.0f;
 
     float mCamDistance   = 6.0f;
     float mCamHeight     = 5.0f;
     float mCamAngle      = 45.0f;
+
+    float mAxesSize      = 2.0f;
+    vec3  mAxesPos       = vec3(-2.0f, 0.0f, -2.0f);
+
 
     bool  mDrawGui       = true;
     bool mDrawAxes = false;
@@ -109,8 +114,14 @@ void HexapodApp::update() { // used to simulate time and physics
     vec3 pos = mHexapodBody.getPosition();
     float bodySize = mHexapodBody.getBodySize();
 
-    vel.y += mGravity * dt;
+
+    vel.y += (mGravity * dt);
+    vel.x = mMoveDir.x * mMoveSpeed;
+    vel.z = mMoveDir.z * mMoveSpeed;
     pos += vel * dt;
+
+
+    pos += mMoveDir * mMoveSpeed * dt;
 
     if(pos.y - bodySize / 2 < 0){
         pos.y = bodySize / 2;
@@ -129,6 +140,8 @@ void HexapodApp::update() { // used to simulate time and physics
             vel.y = glm::max(0.0f, vel.y);
         }
     }
+
+
 
     mHexapodBody.setPosition(pos);
     mHexapodBody.setVelocity(vel);
@@ -162,7 +175,7 @@ void HexapodApp::drawScene() {
     gl::setMatrices(mCam);
 
     mPlane->draw();
-    if(mDrawAxes) drawAxes(2.0, vec3(-2, 0, -2));
+    if(mDrawAxes) drawAxes(mAxesSize, mAxesPos);
     mHexapodBody.draw();
     //drawTargetFootPositions();
 }
@@ -175,8 +188,12 @@ void HexapodApp::drawUI() {
     ImGui::Begin("Controls");
 
     if (ImGui::CollapsingHeader("Hexapod", ImGuiTreeNodeFlags_DefaultOpen)) {
-        if (ImGui::Button("Reset")) mHexapodBody.reset();
-            ImGui::Checkbox("Draw Axes", &mDrawAxes);
+        if (ImGui::Button("Reset")) {
+            mHexapodBody.reset();
+            mMoveDir = vec3(0);
+            mTripodGait.setMoveDir(mMoveDir);
+            mAxesPos = vec3(-2.0, 0, -2.0);
+        }
 
         if(ImGui::DragFloat3("MoveDir", &mMoveDir, 0.01f, -5.0f, 5.0f)){
             mTripodGait.setMoveDir(mMoveDir);
@@ -189,6 +206,13 @@ void HexapodApp::drawUI() {
         ImGui::Text("Body Velocity: %.2f  %.2f  %.2f",
             vel.x, vel.y, vel.z);
 
+        ImGui::Separator();
+        if(ImGui::CollapsingHeader("Axes")){
+            ImGui::Checkbox("Draw Axes", &mDrawAxes);
+            ImGui::DragFloat3("Axes Origin", &mAxesPos, 1.0f, -100.0f, 100.0f);
+            ImGui::SliderFloat("Axes Size", &mAxesSize, 1.0f,   50.0f);
+
+        }
         ImGui::Separator();
         if(ImGui::CollapsingHeader("Joint Lengths")){
             vec3 mLengths = mHexapodBody.getLegLength();
