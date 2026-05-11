@@ -49,6 +49,9 @@ private:
     TripodGait mTripodGait;
 
     vec3  mMoveDir = vec3(0);
+    float mYaw = 0.0f;
+    float mTurnRate = 0.0f;
+
     float mGravity       = -9.8f;
     float mRestitution   = 0.2f;
     float mPlaneSize     = 100.0f;
@@ -64,6 +67,7 @@ private:
 
     bool  mDrawGui       = true;
     bool mDrawAxes = false;
+    bool mDrawTargets = false;
 };
 
 
@@ -114,6 +118,9 @@ void HexapodApp::update() { // used to simulate time and physics
     vec3 pos = mHexapodBody.getPosition();
     float bodySize = mHexapodBody.getBodySize();
 
+    mYaw += mTurnRate * dt;
+
+    mHexapodBody.setYaw(mYaw);
 
     vel.y += (mGravity * dt);
     vel.x = mMoveDir.x * mMoveSpeed;
@@ -177,7 +184,7 @@ void HexapodApp::drawScene() {
     mPlane->draw();
     if(mDrawAxes) drawAxes(mAxesSize, mAxesPos);
     mHexapodBody.draw();
-    //drawTargetFootPositions();
+    if(mDrawTargets) drawTargetFootPositions();
 }
 
 
@@ -191,6 +198,9 @@ void HexapodApp::drawUI() {
         if (ImGui::Button("Reset")) {
             mHexapodBody.reset();
             mMoveDir = vec3(0);
+            mYaw = 0.0f;
+            mTurnRate = 0.0f;
+            mTripodGait.setTurnRate(mTurnRate);
             mTripodGait.setMoveDir(mMoveDir);
             mAxesPos = vec3(-2.0, 0, -2.0);
         }
@@ -198,6 +208,20 @@ void HexapodApp::drawUI() {
         if(ImGui::DragFloat3("MoveDir", &mMoveDir, 0.01f, -5.0f, 5.0f)){
             mTripodGait.setMoveDir(mMoveDir);
         }
+
+        /*if(ImGui::SliderFloat("Yaw", &mYaw, -360.0f, 360.0f)){
+            float rYaw = toRadians(mYaw);
+            //mTripodGait.setYaw(rYaw);
+            mHexapodBody.setYaw(rYaw);
+        }*/
+
+
+        if(ImGui::SliderFloat("TurnRate", &mTurnRate, -1.0f, 1.0f)){
+            //float rYaw = toRadians(mYaw);
+            //mHexapodBody.setYaw(rYaw);
+            mTripodGait.setTurnRate(mTurnRate);
+        }
+
         vec3 pos = mHexapodBody.getPosition();
         vec3 vel = mHexapodBody.getVelocity();
 
@@ -239,6 +263,7 @@ void HexapodApp::drawUI() {
 
     ImGui::Separator();
     if(ImGui::CollapsingHeader("Target Foot Positions")){
+
     vector<Leg> legs = mHexapodBody.getLegs();
     for(int i = 0; i < legs.size(); i++){
         vec3 target = legs[i].getTargetFootPos();
@@ -251,7 +276,7 @@ void HexapodApp::drawUI() {
 }
 
 if(ImGui::CollapsingHeader("IK Debug")){
-
+    ImGui::Checkbox("Draw Target Feet Position", &mDrawTargets);
     vector<Leg> legs = mHexapodBody.getLegs();
     vec3 bodyPos = mHexapodBody.getPosition();
 

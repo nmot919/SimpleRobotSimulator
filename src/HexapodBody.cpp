@@ -1,4 +1,6 @@
 #include "HexapodBody.h"
+#include <cinder/gl/scoped.h>
+#include <cinder/gl/wrapper.h>
 
 HexapodBody::HexapodBody(vec3 startingPos) : mStartingPos(startingPos) {
     auto shader = gl::getStockShader(gl::ShaderDef().lambert().color());
@@ -66,25 +68,29 @@ void HexapodBody::buildLegs(){
 
 void HexapodBody::drawLegs(){
   for(int i = 0; i < NUM_LEGS; i++){
-    mLegs[i].draw(mBodyPos);
+    mLegs[i].draw(vec3(0));
   }
 }
 
 void HexapodBody::drawBody(){
     gl::ScopedModelMatrix m;
-    gl::translate(mBodyPos);
     gl::scale(vec3(0.75f, 0.10f, 1.0f));
     mBody->draw();
 }
 
 
 void HexapodBody::draw(){
+    gl::ScopedModelMatrix root;
+    gl::translate(mBodyPos);
+    gl::rotate(mYaw, vec3(0, 1, 0));
+
     drawBody();
     drawLegs();
 }
 
 void HexapodBody::reset(){
     this->mBodyPos = this->mStartingPos;
+    this->mYaw = 0.0f;
     this->mBodyVelocity = vec3(0);
     this->legLength = this->startingLegLength;
     buildLegs();
@@ -112,4 +118,12 @@ void HexapodBody::setVelocity(vec3 v){
 
 float HexapodBody::getBodySize(){
     return this->mBodySize;
+}
+
+void HexapodBody::setYaw(float yaw){
+    this->mYaw = yaw;
+}
+
+float HexapodBody::getYaw(){
+    return this->mYaw;
 }

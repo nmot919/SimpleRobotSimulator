@@ -121,6 +121,7 @@
   float maxReach = lengths.y + lengths.z;
   float minReach = abs(lengths.y - lengths.z);
   if(L > maxReach) L = maxReach - 0.005f;
+
   if(L < minReach) L = minReach + 0.005f;
 
   float alpha1 = acos(-t.y/L);

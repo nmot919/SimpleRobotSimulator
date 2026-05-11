@@ -34,6 +34,9 @@ void setVelocity(vec3 v);
 
 float getBodySize();
 
+float getYaw();
+void setYaw(float yaw);
+
 
 std::vector<Leg> getLegs();
 void setLegLength(vec3 l);
@@ -62,5 +65,7 @@ vec3  mBodyPos;
 vec3  mBodyVelocity   = vec3(0);
 gl::BatchRef mBody;
 std::vector<Leg> mLegs;
+
+float mYaw = 0.0f;
 
 };
