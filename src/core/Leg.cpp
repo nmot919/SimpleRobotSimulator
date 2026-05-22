@@ -2,17 +2,19 @@
 #include <cinder/CinderMath.h>
 #include <glm/common.hpp>
 
+
+
     Leg::Leg(vec3 outDir) : outDir(outDir){
       // starting angles should be calculated from outDir to stand straight up
       angles = vec3(toRadians(90.0f), toRadians(120.0f), toRadians(180.0f));
-
-      rebuildBatches();
     }
 
     // targetFootPos is in local coordinates, maybe make private in the future.
     void Leg::setTargetFootPos(vec3 targetFootPos){
       this->targetFootPos = targetFootPos;
     }
+
+    vec3 Leg::getOutDir(){return outDir;}
 
     vec3 Leg::getTargetFootPos(){return targetFootPos;}
 
@@ -27,10 +29,12 @@
 
     vec3 Leg::getAngles(){return vec3(toDegrees(angles.x), toDegrees(angles.y), toDegrees(angles.z));}
 
+    vec3 Leg::getAnglesRad(){return vec3(angles.x, angles.y, angles.z);}
+
+
     void Leg::setLengths(vec3 lengths){
       if(this->lengths != lengths){
         this->lengths = lengths;
-        rebuildBatches();
       }
     }
 
@@ -58,58 +62,11 @@
       return vec3(m[3]);
     }
 
-    void Leg::draw(vec3 bodyPos){
-
-      // don't forget that changing this may mean that getFootWorldPos has to be changed as
-
-      IK_Solver();
-
-      gl::ScopedModelMatrix root;
-      gl::translate(bodyPos + localOffset);
-      //gl::rotate(-atan2(outDir.z, outDir.x) + angles.x - (M_PI / 2.0), vec3(0, 1, 0));
-      gl::rotate(atan2(outDir.x, outDir.z) - (M_PI / 2.0) + angles.x, vec3(0, 1, 0));
-
-      {
-        // move to coxa draw point and draw coxa
-        gl::ScopedModelMatrix m;
-        gl::translate(vec3(lengths.x * 0.5f, 0, 0));
-        mCoxa->draw();
-      }
-
-      // move to tip of coxa
-      gl::translate(vec3(lengths.x, 0, 0));
-      gl::rotate(angles.y, vec3(0, 0, 1));
-
-      {
-        // move to femur draw point and draw femur
-        // length being negative shouldnt affect the rest of the system, just makes the drawing correct
-          gl::ScopedModelMatrix m;
-          gl::translate(vec3(0, -lengths.y * 0.5f, 0));
-          mFemur->draw();
-      }
-
-      // move to tip of femur
-      gl::translate(vec3(0, -lengths.y, 0));
-      //gl::rotate(-angles.z + (M_PI / 2.0), vec3(0, 0, 1));
-      gl::rotate(angles.z + (M_PI), vec3(0, 0, 1));
-
-
-      {
-        // move to tibia draw point and draw tibia
-          gl::ScopedModelMatrix m;
-          gl::translate(vec3(0, -lengths.z * 0.5, 0));
-          mTibia->draw();
-      }
-
-      // move to tip of tibia to draw foot
-      gl::translate(vec3(0, -lengths.z, 0));
-      mFoot->draw();
-    }
 
 
     // takes target foot position which is in local coordinates and computes the required angle coxa, femur, and tibia angles required
     // to reach that foot position
-    void Leg::IK_Solver(){
+  void Leg::IK_Solver(){
 
   vec3 t = targetFootPos - localOffset;
   float targetAngle = atan2(t.x, t.z);
@@ -133,15 +90,3 @@
   angles.y = alpha;
   angles.z = beta;
 }
-
-
-    void Leg::rebuildBatches(){
-      auto shader = gl::getStockShader(gl::ShaderDef().lambert().color());
-      auto blue   = geom::Constant(geom::COLOR, Color(0.3f, 0.6f, 1.0f));
-      auto yellow = geom::Constant(geom::COLOR, Color(1, 1, 0));
-
-      mCoxa  = gl::Batch::create(geom::Cube().size(vec3(lengths.x, 0.03, 0.03)) >> blue, shader);
-      mFemur = gl::Batch::create(geom::Cube().size(vec3(0.03, lengths.y, 0.03)) >> blue, shader);
-      mTibia = gl::Batch::create(geom::Cube().size(vec3(0.03, lengths.z, 0.03)) >> blue, shader);
-      mFoot  = gl::Batch::create(geom::Sphere().radius(0.03).subdivisions(8) >> yellow, shader);
-    }

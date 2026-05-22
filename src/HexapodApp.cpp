@@ -1,6 +1,5 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
-#include "cinder/gl/gl.h"
 #include "cinder/gl/Batch.h"
 #include "cinder/CinderImGui.h"
 #include <array>
@@ -15,10 +14,9 @@
 #include <glm/fwd.hpp>
 #include <glm/trigonometric.hpp>
 #include <imgui/imgui.h>
-#include <vector>
-#include "Leg.h"
-#include "HexapodBody.h"
 #include "TripodGait.h"
+#include "core/HexapodBody.h"
+#include "sim/BodyRenderer.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -46,6 +44,7 @@ private:
     gl::BatchRef mPlane;
 
     HexapodBody mHexapodBody;
+    BodyRenderer mBodyRenderer;
     TripodGait mTripodGait;
 
     vec3  mMoveDir = vec3(0);
@@ -109,6 +108,7 @@ void HexapodApp::setup() {
     updateCamera();
 
     mHexapodBody = HexapodBody(vec3(0, STARTING_Y, 0));
+    mBodyRenderer = BodyRenderer(mHexapodBody);
 }
 
 void HexapodApp::update() { // used to simulate time and physics
@@ -155,6 +155,7 @@ void HexapodApp::update() { // used to simulate time and physics
 
     std::array<vec3, NUM_LEGS> target = mTripodGait.getGaitTarget(dt);
     mHexapodBody.setLegTarget(target);
+    mHexapodBody.update();
 
 }
 
@@ -183,7 +184,7 @@ void HexapodApp::drawScene() {
 
     mPlane->draw();
     if(mDrawAxes) drawAxes(mAxesSize, mAxesPos);
-    mHexapodBody.draw();
+    mBodyRenderer.draw(mHexapodBody);
     if(mDrawTargets) drawTargetFootPositions();
 }
 
@@ -197,6 +198,8 @@ void HexapodApp::drawUI() {
     if (ImGui::CollapsingHeader("Hexapod", ImGuiTreeNodeFlags_DefaultOpen)) {
         if (ImGui::Button("Reset")) {
             mHexapodBody.reset();
+            mBodyRenderer.rebuildLegRenderers(mHexapodBody);
+            //mTripodGait.setRestTargets(mHexapodBody.getRestTargets());
             mMoveDir = vec3(0);
             mYaw = 0.0f;
             mTurnRate = 0.0f;
@@ -239,6 +242,8 @@ void HexapodApp::drawUI() {
 
         if (changed)
             mHexapodBody.setLegLength(mLengths);
+            mBodyRenderer.rebuildLegRenderers(mHexapodBody);
+            //    mTripodGait.setRestTargets(mHexapodBody.getRestTargets());
         }
 
         ImGui::Separator();

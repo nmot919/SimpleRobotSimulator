@@ -10,9 +10,11 @@ find_package(Bullet REQUIRED)
 ci_make_app(
     APP_NAME    hexapod
     SOURCES     src/HexapodApp.cpp
-                src/Leg.cpp
-                src/HexapodBody.cpp
+                src/core/Leg.cpp
+                src/core/HexapodBody.cpp
                 src/TripodGait.cpp
+                src/sim/BodyRenderer.cpp
+                src/sim/LegRenderer.cpp
     CINDER_PATH ${CINDER_PATH}
 )
 

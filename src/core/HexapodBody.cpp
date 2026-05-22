@@ -1,11 +1,6 @@
 #include "HexapodBody.h"
-#include <cinder/gl/scoped.h>
-#include <cinder/gl/wrapper.h>
 
 HexapodBody::HexapodBody(vec3 startingPos) : mStartingPos(startingPos) {
-    auto shader = gl::getStockShader(gl::ShaderDef().lambert().color());
-    auto blue   = geom::Constant(geom::COLOR, Color(0.3f, 0.6f, 1.0f));
-    mBody       = gl::Batch::create(geom::Cube().size(vec3(mBodySize)) >> blue, shader);
     mBodyPos    = mStartingPos;
     buildLegs();
 }
@@ -27,7 +22,7 @@ void HexapodBody::setStartingLegLength(vec3 l){
     this->startingLegLength = l;
 }
 
-std::vector<Leg> HexapodBody::getLegs(){
+std::vector<Leg>& HexapodBody::getLegs(){
     return mLegs;
 }
 
@@ -66,27 +61,6 @@ void HexapodBody::buildLegs(){
     }
 }
 
-void HexapodBody::drawLegs(){
-  for(int i = 0; i < NUM_LEGS; i++){
-    mLegs[i].draw(vec3(0));
-  }
-}
-
-void HexapodBody::drawBody(){
-    gl::ScopedModelMatrix m;
-    gl::scale(vec3(0.75f, 0.10f, 1.0f));
-    mBody->draw();
-}
-
-
-void HexapodBody::draw(){
-    gl::ScopedModelMatrix root;
-    gl::translate(mBodyPos);
-    gl::rotate(mYaw, vec3(0, 1, 0));
-
-    drawBody();
-    drawLegs();
-}
 
 void HexapodBody::reset(){
     this->mBodyPos = this->mStartingPos;
@@ -94,6 +68,12 @@ void HexapodBody::reset(){
     this->mBodyVelocity = vec3(0);
     this->legLength = this->startingLegLength;
     buildLegs();
+}
+
+void HexapodBody::update(){
+    for(int i = 0; i < NUM_LEGS; i++){
+        mLegs[i].IK_Solver();
+    }
 }
 
 vec3 HexapodBody::getPosition(){
