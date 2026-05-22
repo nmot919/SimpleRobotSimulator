@@ -1,13 +1,11 @@
 #include "TripodGait.h"
-#include <array>
-#include <glm/gtx/rotate_vector.hpp>
 
 
 
 
 
 std::array<vec3, NUM_LEGS> TripodGait::getGaitTarget(float dt){
-    if(glm::length(mMoveDir) < 0.01f && abs(mTurnRate) < 0.01f)
+    if(length(mMoveDir) < 0.01f && abs(mTurnRate) < 0.01f)
         return mRestTargets;
 
 
@@ -27,13 +25,13 @@ void TripodGait::updateGroup(bool group, float phase){
 
         vec3 rest = mRestTargets[idx];
 
-        vec3 tangent = glm::normalize(vec3(rest.z, 0, -rest.x)) * mTurnRate;
+        vec3 tangent = normalize(vec3(rest.z, 0, -rest.x)) * mTurnRate;
         vec3 stride = mMoveDir * 0.4f + tangent * 0.4f;
 
         if(phase < 0.5f){
             float t = phase / 0.5f;
 
-            vec3 pos   = glm::mix(rest - stride, rest + stride, t);
+            vec3 pos   = mix(rest - stride, rest + stride, t);
 
             pos.y += mStepHeight * sin(t * M_PI);
 
@@ -63,11 +61,11 @@ float TripodGait::getTurnRate(){
     return this->mTurnRate;
 }
 
-void TripodGait::setRestTargets(std::array<vec3, NUM_LEGS> t){
+void TripodGait::setRestTargets(std::array<vec3, NUM_LEGS>& t){
     this->mRestTargets = t;
 }
 
 std::array<vec3,
-NUM_LEGS> TripodGait::getRestTargets(){
+NUM_LEGS>& TripodGait::getRestTargets(){
     return this->mRestTargets;
 }

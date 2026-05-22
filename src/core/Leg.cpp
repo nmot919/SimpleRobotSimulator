@@ -1,6 +1,4 @@
 #include "Leg.h"
-#include <cinder/CinderMath.h>
-#include <glm/common.hpp>
 
 
 
@@ -41,25 +39,47 @@
     vec3 Leg::getLengths(){return lengths;}
 
     vec3 Leg::getFootWorldPos(vec3 bodyPos){
-      glm::mat4 m = glm::mat4(1.0f);
+      #ifdef ARDUINO
+          // manual matrix math
+          vec3 pos = localOffset + bodyPos;
 
-      // move to mount point
-      m = glm::translate(m, localOffset + bodyPos);
-      m = glm::rotate(m, float(atan2(outDir.x, outDir.z) + angles.x - (M_PI/2.0f)), vec3(0, 1, 0));
+          float yaw = atan2(outDir.x, outDir.z) + angles.x - (float(M_PI)/2.0f);
+          float cosYaw = cos(yaw), sinYaw = sin(yaw);
 
-      // move to tip of coxa
-      m = glm::translate(m, vec3(lengths.x, 0, 0));
-      m = glm::rotate(m, float(angles.y), vec3(0, 0, 1));
+          // coxa tip
+          float coxaX = cosYaw * lengths.x;
+          float coxaZ = sinYaw * lengths.x;
+          pos.x += coxaX;
+          pos.z += coxaZ;
 
-      // move to tip of femur
-      m = glm::translate(m, vec3(0, -lengths.y, 0));
-      m = glm::rotate(m, float(angles.z + (M_PI)), vec3(0, 0, 1));
+          // femur tip
+          float femurX = -sin(angles.y) * lengths.y;
+          float femurY = -cos(angles.y) * lengths.y;
+          pos.x += cosYaw * femurX;
+          pos.y += femurY;
+          pos.z += sinYaw * femurX;
 
-      // move to tip of tibia (in other words to the foot)
-      m = glm::translate(m, vec3(0, -lengths.z, 0));
+          // tibia tip
+          float tibiaAngle = angles.y + angles.z + float(M_PI);
+          float tibiaX = -sin(tibiaAngle) * lengths.z;
+          float tibiaY = -cos(tibiaAngle) * lengths.z;
+          pos.x += cosYaw * tibiaX;
+          pos.y += tibiaY;
+          pos.z += sinYaw * tibiaX;
 
-      // return the x/y/z vector components from the translation
-      return vec3(m[3]);
+          return pos;
+      #else
+          // glm version for sim — keep this working and verified
+          glm::mat4 m = glm::mat4(1.0f);
+          m = glm::translate(m, localOffset + bodyPos);
+          m = glm::rotate(m, float(atan2(outDir.x, outDir.z) + angles.x - (M_PI/2.0f)), glm::vec3(0, 1, 0));
+          m = glm::translate(m, glm::vec3(lengths.x, 0, 0));
+          m = glm::rotate(m, float(angles.y), glm::vec3(0, 0, 1));
+          m = glm::translate(m, glm::vec3(0, -lengths.y, 0));
+          m = glm::rotate(m, float(angles.z + M_PI), glm::vec3(0, 0, 1));
+          m = glm::translate(m, glm::vec3(0, -lengths.z, 0));
+          return vec3(m[3]);
+      #endif
     }
 
 

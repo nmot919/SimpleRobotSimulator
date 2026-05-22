@@ -1,12 +1,7 @@
 #pragma once
-#include "cinder/gl/gl.h"
-#include "cinder/gl/Batch.h"
 #include <array>
-#include <cinder/CinderMath.h>
-#include <cinder/Color.h>
-#include <cinder/GeomIo.h>
-#include <cinder/Vector.h>
-#include <glm/fwd.hpp>
+#include "Leg.h"
+
 
 
 #ifndef NUM_LEGS
@@ -14,7 +9,6 @@
 #endif
 
 
-using namespace ci;
 using namespace std;
 
 class TripodGait{
@@ -28,8 +22,8 @@ vec3 getMoveDir();
 void setTurnRate(float tr);
 float getTurnRate();
 
-void setRestTargets(std::array<vec3, NUM_LEGS> t);
-std::array<vec3, NUM_LEGS> getRestTargets();
+void setRestTargets(std::array<vec3, NUM_LEGS>& t);
+std::array<vec3, NUM_LEGS>& getRestTargets();
 
 private:
 int groupA[3] = {0, 2, 4};

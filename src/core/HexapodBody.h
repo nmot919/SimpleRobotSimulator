@@ -1,5 +1,6 @@
 #pragma once
 #include "Leg.h"
+#include <array>
 
 #ifndef NUM_LEGS
 #define NUM_LEGS 6
@@ -29,7 +30,7 @@ void  setYaw(float yaw);
 float getBodySize();
 
 
-std::vector<Leg>& getLegs();
+std::array<Leg, NUM_LEGS>& getLegs();
 void setLegLength(vec3 l);
 void setStartingLegLength(vec3 l);
 vec3 getLegLength();
@@ -53,7 +54,7 @@ vec3 mStartingPos = vec3(0);
 float mBodySize        = 0.5;
 vec3  mBodyPos;
 vec3  mBodyVelocity   = vec3(0);
-std::vector<Leg> mLegs;
+std::array<Leg, NUM_LEGS> mLegs;
 
 float mYaw = 0.0f;
 

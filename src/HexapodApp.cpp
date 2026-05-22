@@ -14,7 +14,8 @@
 #include <glm/fwd.hpp>
 #include <glm/trigonometric.hpp>
 #include <imgui/imgui.h>
-#include "TripodGait.h"
+#include "core/Leg.h"
+#include "core/TripodGait.h"
 #include "core/HexapodBody.h"
 #include "sim/BodyRenderer.h"
 
@@ -261,7 +262,7 @@ void HexapodApp::drawUI() {
     ImGui::Separator();
     if(ImGui::CollapsingHeader("Target Foot Positions")){
 
-    vector<Leg> legs = mHexapodBody.getLegs();
+    std::array<Leg, NUM_LEGS> legs = mHexapodBody.getLegs();
     for(int i = 0; i < legs.size(); i++){
         vec3 target = legs[i].getTargetFootPos();
         char label[32];
@@ -274,7 +275,7 @@ void HexapodApp::drawUI() {
 
 if(ImGui::CollapsingHeader("IK Debug")){
     ImGui::Checkbox("Draw Target Feet Position", &mDrawTargets);
-    vector<Leg> legs = mHexapodBody.getLegs();
+    array<Leg, NUM_LEGS> legs = mHexapodBody.getLegs();
     vec3 bodyPos = mHexapodBody.getPosition();
 
     for(int i = 0; i < legs.size(); i++){

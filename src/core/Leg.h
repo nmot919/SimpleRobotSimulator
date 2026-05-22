@@ -1,4 +1,5 @@
 #pragma once
+
 #ifdef ARDUINO
 #include "../math/Vec3.h"
 using vec3 = Vec3;
@@ -10,11 +11,15 @@ using namespace ci;
 
 
 
-
 class Leg {
   public:
     Leg(vec3 outDir);
     void IK_Solver();
+
+    Leg() : outDir(vec3(0,0,1)){
+        angles  = vec3(toRadians(90.0f), toRadians(120.0f), toRadians(180.0f));
+        lengths = vec3(0.1f, 0.3f, 0.8f);
+    }
 
     void setTargetFootPos(vec3 targetFootPos);
     vec3 getTargetFootPos();
