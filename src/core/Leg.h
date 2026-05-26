@@ -17,7 +17,7 @@ class Leg {
     void IK_Solver();
 
     Leg() : outDir(vec3(0,0,1)){
-        angles  = vec3(toRadians(90.0f), toRadians(120.0f), toRadians(180.0f));
+        angles  = vec3(toRadians(0.0f), toRadians(0.0f), toRadians(0.0f));
         lengths = vec3(0.1f, 0.3f, 0.8f);
     }
 

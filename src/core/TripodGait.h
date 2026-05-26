@@ -30,8 +30,8 @@ int groupA[3] = {0, 2, 4};
 int groupB[3] = {1, 3, 5};
 
 float mGaitPhase    = 0.0f;
-float mStepDuration = 0.5f;
-float mStepHeight   = 0.3f;
+float mStepDuration = 2.0f; // og 0.5
+float mStepHeight   = 0.2f; // og 0.3, make constructor for these
 vec3  mMoveDir = vec3(0);
 float mTurnRate = 0.0f;
 

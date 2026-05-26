@@ -4,7 +4,7 @@
 
     Leg::Leg(vec3 outDir) : outDir(outDir){
       // starting angles should be calculated from outDir to stand straight up
-      angles = vec3(toRadians(90.0f), toRadians(120.0f), toRadians(180.0f));
+      angles = vec3(toRadians(0.0f), toRadians(0.0f), toRadians(0.0f));
     }
 
     // targetFootPos is in local coordinates, maybe make private in the future.

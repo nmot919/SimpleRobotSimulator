@@ -2,8 +2,6 @@
 
 
 
-
-
 std::array<vec3, NUM_LEGS> TripodGait::getGaitTarget(float dt){
     if(length(mMoveDir) < 0.01f && abs(mTurnRate) < 0.01f)
         return mRestTargets;
@@ -17,7 +15,7 @@ std::array<vec3, NUM_LEGS> TripodGait::getGaitTarget(float dt){
     return mCurrentTargets;
 }
 
-// this is ai generated lol, didnt wanna bother actually making it
+
 void TripodGait::updateGroup(bool group, float phase){
 
     for(int i = 0; i < NUM_LEGS/2; i++){
@@ -39,7 +37,7 @@ void TripodGait::updateGroup(bool group, float phase){
         } else {
             // stance phase — foot pushes back against ground
             float t = (phase - 0.5f) / 0.5f;  // 0->1 within stance
-            mCurrentTargets[idx] = glm::mix(rest + stride, rest - stride, t);
+            mCurrentTargets[idx] = mix(rest + stride, rest - stride, t);
             mCurrentTargets[idx].y = mRestTargets[idx].y; // keep grounded
         }
     }
