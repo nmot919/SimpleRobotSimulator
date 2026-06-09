@@ -95,6 +95,10 @@
   //angles.x = targetAngle - baseAngle;
   angles.x = (targetAngle - baseAngle) + toRadians(90.0f);
 
+  while(angles.x >  M_PI) angles.x -= 2.0f * M_PI;
+  while(angles.x < -M_PI) angles.x += 2.0f * M_PI;
+
+
   float horizontal = sqrt(t.x*t.x + t.z*t.z) - lengths.x;
   float L = sqrt(t.y*t.y + horizontal*horizontal);
   float maxReach = lengths.y + lengths.z;
