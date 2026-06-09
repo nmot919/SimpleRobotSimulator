@@ -24,7 +24,9 @@ void TripodGait::updateGroup(bool group, float phase){
         vec3 rest = mRestTargets[idx];
 
         vec3 tangent = normalize(vec3(rest.z, 0, -rest.x)) * mTurnRate;
-        vec3 stride = mMoveDir * 0.4f + tangent * 0.4f;
+        vec3 stride = mMoveDir * mStrideRadius + tangent * 0.4f;
+        //vec3 stride = mMoveDir * 0.4f + tangent * 0.4f;
+
 
         if(phase < 0.5f){
             float t = phase / 0.5f;
@@ -59,7 +61,7 @@ float TripodGait::getTurnRate(){
     return this->mTurnRate;
 }
 
-void TripodGait::setRestTargets(std::array<vec3, NUM_LEGS>& t){
+void TripodGait::setRestTargets(const std::array<vec3, NUM_LEGS>& t){
     this->mRestTargets = t;
 }
 

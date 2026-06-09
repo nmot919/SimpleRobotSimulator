@@ -1,4 +1,5 @@
 #include "HexapodBody.h"
+#include <array>
 
 HexapodBody::HexapodBody(vec3 startingPos) : mStartingPos(startingPos) {
     mBodyPos    = mStartingPos;
@@ -25,9 +26,21 @@ void HexapodBody::setStartingLegLength(vec3 l){
 std::array<Leg, NUM_LEGS>& HexapodBody::getLegs(){
     return mLegs;
 }
+std::array<vec3, NUM_LEGS> HexapodBody::getLegTargets(){
+    std::array<vec3, NUM_LEGS> t;
+    for(int i = 0; i < NUM_LEGS; i++){
+        t[i] = mLegs[i].getFootWorldPos(vec3(0));
+    }
+    return t;
+}
+
 
 vec3 HexapodBody::getLegTarget(int i){
     return mLegs[i].getTargetFootPos();
+}
+
+const std::array<vec3, NUM_LEGS>& HexapodBody::getRestTargets() {
+    return mRestTargets;
 }
 
 void HexapodBody::setLegTarget(int i, vec3 target){
@@ -46,17 +59,21 @@ void HexapodBody::buildLegs(){
 
         vec3 attach = vec3(rx * sin(a), 0, rz * cos(a));
 
-        // femur 90 degrees, tibia 120 degrees
-        vec3 targets[] = {vec3(0, -0.69, 1.33), vec3(0.42, -0.69, 1.22), vec3(0.42, -0.69, -1.22), vec3(0, -0.69, -1.33), vec3(-0.42, -0.69, -1.22), vec3(-0.42, -0.69, 1.22)};
-
         // outDir should point away from body-center along the actual attach direction
         vec3 out = normalize(vec3(attach.x, 0, attach.z));
 
         Leg leg(out);
         leg.setLocalOffset(attach);
         leg.setLengths(legLength);
-        leg.setTargetFootPos(targets[i]);
+        // this one changes rest targets
+        leg.setAngles(mStartingLegAngles);
+
+        vec3 restTarget = leg.getFootWorldPos(vec3(0));
+        leg.setTargetFootPos(restTarget);
+        mRestTargets[i] = restTarget;
         mLegs[i] = leg;
+
+
     }
 }
 

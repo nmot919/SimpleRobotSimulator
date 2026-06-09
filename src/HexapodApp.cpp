@@ -110,6 +110,8 @@ void HexapodApp::setup() {
 
     mHexapodBody = HexapodBody(vec3(0, STARTING_Y, 0));
     mBodyRenderer = BodyRenderer(mHexapodBody);
+
+    mTripodGait.setRestTargets(mHexapodBody.getRestTargets());
 }
 
 void HexapodApp::update() { // used to simulate time and physics

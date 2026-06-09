@@ -1,4 +1,3 @@
-
 #ifndef VEC_H
 #include "../math/Vec3.h"
 using vec3 = Vec3;

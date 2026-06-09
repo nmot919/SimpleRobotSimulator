@@ -18,9 +18,9 @@ ServoController* ServoController::getInstance(){
 
 void ServoController::writeLeg(int leg, vec3 anglesDeg){
 
-    setAngle(leg * 3 + 0, anglesDeg.x);
+    setAngle(leg * 3 + 0, anglesDeg.z);
     setAngle(leg * 3 + 1, anglesDeg.y);
-    setAngle(leg * 3 + 2, anglesDeg.z);
+    setAngle(leg * 3 + 2, anglesDeg.x);
 
 }
 
