@@ -54,7 +54,7 @@ float legAngles[6] = {0, 45, 135, 180, 235, 315};
 vec3 startingLegLength = vec3(0.10f, 0.30f, 0.80f);
 vec3 legLength = startingLegLength; // coxa, femur, tibia
 
-vec3 mStartingLegAngles = vec3(0.0f, 90.0f, 90.0f);
+vec3 mStartingLegAngles = vec3(90.0f, 90.0f, 90.0f);
 vec3 mStartingPos = vec3(0);
 float mBodySize        = 0.5;
 vec3  mBodyPos;

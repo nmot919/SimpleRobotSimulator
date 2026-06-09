@@ -18,7 +18,8 @@ void LegRenderer::draw(Leg& leg, vec3 bodyPos){
       gl::ScopedModelMatrix root;
       gl::translate(bodyPos + localOffset);
       //gl::rotate(-atan2(outDir.z, outDir.x) + angles.x - (M_PI / 2.0), vec3(0, 1, 0));
-      gl::rotate(atan2(outDir.x, outDir.z) - (M_PI / 2.0) + angles.x, vec3(0, 1, 0));
+      //gl::rotate(atan2(outDir.x, outDir.z) - (M_PI / 2.0) + angles.x, vec3(0, 1, 0));
+      gl::rotate(atan2(outDir.x, outDir.z) + angles.x - (M_PI), vec3(0, 1, 0));
 
       {
         // move to coxa draw point and draw coxa
@@ -41,7 +42,7 @@ void LegRenderer::draw(Leg& leg, vec3 bodyPos){
 
       // move to tip of femur
       gl::translate(vec3(0, -lengths.y, 0));
-      //gl::rotate(-angles.z + (M_PI / 2.0), vec3(0, 0, 1));
+      gl::rotate(-angles.z + (M_PI / 2.0), vec3(0, 0, 1));
       gl::rotate(angles.z + (M_PI), vec3(0, 0, 1));
 
 

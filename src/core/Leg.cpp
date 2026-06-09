@@ -1,10 +1,11 @@
 #include "Leg.h"
+#include <cinder/CinderMath.h>
 
 
 
     Leg::Leg(vec3 outDir) : outDir(outDir){
       // starting angles should be calculated from outDir to stand straight up
-      angles = vec3(toRadians(0.0f), toRadians(90.0f), toRadians(90.0f));
+      angles = vec3(toRadians(90.0f), toRadians(90.0f), toRadians(90.0f));
     }
 
     // targetFootPos is in local coordinates, maybe make private in the future.
@@ -43,7 +44,7 @@
           // manual matrix math
           vec3 pos = localOffset + bodyPos;
 
-          float yaw = atan2(outDir.x, outDir.z) + angles.x - (float(M_PI)/2.0f);
+          float yaw = atan2(outDir.x, outDir.z) + angles.x - (float(M_PI));
           float cosYaw = cos(yaw), sinYaw = sin(yaw);
 
           // coxa tip
@@ -72,7 +73,7 @@
           // glm version for sim — keep this working and verified
           glm::mat4 m = glm::mat4(1.0f);
           m = glm::translate(m, localOffset + bodyPos);
-          m = glm::rotate(m, float(atan2(outDir.x, outDir.z) + angles.x - (M_PI/2.0f)), glm::vec3(0, 1, 0));
+          m = glm::rotate(m, float(atan2(outDir.x, outDir.z) + angles.x - (M_PI)), glm::vec3(0, 1, 0));
           m = glm::translate(m, glm::vec3(lengths.x, 0, 0));
           m = glm::rotate(m, float(angles.y), glm::vec3(0, 0, 1));
           m = glm::translate(m, glm::vec3(0, -lengths.y, 0));
@@ -91,7 +92,8 @@
   vec3 t = targetFootPos - localOffset;
   float targetAngle = atan2(t.x, t.z);
   float baseAngle = atan2(outDir.x, outDir.z);
-  angles.x = targetAngle - baseAngle;
+  //angles.x = targetAngle - baseAngle;
+  angles.x = (targetAngle - baseAngle) + toRadians(90.0f);
 
   float horizontal = sqrt(t.x*t.x + t.z*t.z) - lengths.x;
   float L = sqrt(t.y*t.y + horizontal*horizontal);
